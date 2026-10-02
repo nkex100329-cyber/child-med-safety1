@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>兒童用藥安全守護助手</title>
+<style>
+:root{--bg:#F2F7F6;--card:#fff;--ink:#12303A;--sub:#5B7480;--line:#DCE7E6;--pri:#0E7C7B;--pri2:#D6EFEE;--ok:#1E9E5A;--okbg:#DDF4E7;--warn:#E08A00;--warnbg:#FFF0CF;--bad:#D62839;--badbg:#FFE1E4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1B20;--card:#152A31;--ink:#EAF4F3;--sub:#93AEB4;--line:#24404A;--pri:#3CC5C0;--pri2:#173B3E;--okbg:#12382A;--warnbg:#3D2E0C;--badbg:#45161C;--ok:#4ED88A;--warn:#F5B238;--bad:#FF6B78}}
+:root[data-theme="dark"]{--bg:#0D1B20;--card:#152A31;--ink:#EAF4F3;--sub:#93AEB4;--line:#24404A;--pri:#3CC5C0;--pri2:#173B3E;--okbg:#12382A;--warnbg:#3D2E0C;--badbg:#45161C;--ok:#4ED88A;--warn:#F5B238;--bad:#FF6B78}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:18px;line-height:1.5}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding:0 16px calc(96px + env(safe-area-inset-bottom,0px))}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 6px;gap:8px}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px;font-size:16px;font-weight:600;font-family:inherit;min-height:44px}
+h1{font-size:26px;margin:8px 0 4px}h2{font-size:22px;margin:0 0 8px}
+.sub{color:var(--sub);font-size:16px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px}
+.btn{display:block;width:100%;min-height:64px;border:0;border-radius:20px;font-size:21px;font-weight:700;font-family:inherit;background:var(--pri);color:#fff;padding:14px 18px;cursor:pointer;text-align:center}
+.btn.ghost{background:var(--pri2);color:var(--pri)}.btn.bad{background:var(--bad)}.btn.small{min-height:52px;font-size:17px;font-weight:600;background:transparent;color:var(--sub);border:2px solid var(--line)}
+.btn:active{transform:scale(.98)}
+:focus-visible{outline:4px solid var(--warn);outline-offset:2px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:5}
+nav div{display:flex;width:100%;max-width:480px;gap:4px}
+nav button{flex:1;border:0;background:none;color:var(--sub);font-family:inherit;font-size:14px;font-weight:600;padding:6px 2px;border-radius:14px;min-height:60px}
+nav button b{display:block;font-size:26px;line-height:1.1}
+nav button.on{color:var(--pri);background:var(--pri2)}
+.ringwrap{position:relative;width:250px;height:250px;margin:6px auto 14px}
+.ringwrap svg{transform:rotate(-90deg)}
+.ringtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.big{font-size:52px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;line-height:1.1}
+.lbl{font-size:17px;color:var(--sub)}
+.tag{display:inline-block;border-radius:10px;padding:3px 10px;font-size:15px;font-weight:700;margin:2px 4px 2px 0;background:var(--pri2);color:var(--pri)}
+.tag.fever{background:var(--warnbg);color:var(--warn)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+.pick{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:18px;padding:14px 16px;margin-bottom:10px;font-family:inherit;font-size:19px;font-weight:700;min-height:64px}
+.pick small{display:block;font-weight:400;color:var(--sub);font-size:15px}
+.pick.on{border-color:var(--pri);background:var(--pri2)}
+.light{border-radius:24px;padding:22px 18px;text-align:center;margin-bottom:14px}
+.light .em{font-size:64px;line-height:1}.light .t{font-size:30px;font-weight:800;margin:6px 0}
+.g{background:var(--okbg);color:var(--ok)}.y{background:var(--warnbg);color:var(--warn)}.r{background:var(--badbg);color:var(--bad)}
+.light p{color:var(--ink);margin:6px 0 0;font-size:17px}
+input[type=number]{width:100%;font-size:44px;font-weight:800;text-align:center;border:3px solid var(--line);border-radius:20px;padding:10px;background:var(--card);color:var(--ink);font-family:inherit}
+.tl{border-left:4px solid var(--line);margin-left:10px;padding-left:18px}
+.tli{position:relative;margin-bottom:14px}.tli:before{content:"";position:absolute;left:-27px;top:20px;width:16px;height:16px;border-radius:50%;background:var(--pri);border:3px solid var(--bg)}
+.tli.f:before{background:var(--warn)}
+.time{font-size:15px;color:var(--sub);font-weight:600}
+.mask{position:fixed;inset:0;background:rgba(6,20,24,.6);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:480px;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.block{position:fixed;inset:0;z-index:30;background:var(--bad);color:#fff;overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));animation:shake .5s}
+.block .in{max-width:480px;margin:0 auto}
+.block h1{font-size:34px;line-height:1.25;margin:10px 0}
+.block .bx{background:rgba(255,255,255,.16);border-radius:20px;padding:16px;font-size:20px;margin:14px 0}
+.block .btn{background:#fff;color:var(--bad)}.block .btn.small{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-weight:700;z-index:40;font-size:17px}
+.note{font-size:14px;color:var(--sub);text-align:center;margin:10px 0}
+.prev{width:100%;border-radius:18px;max-height:220px;object-fit:cover;margin-bottom:12px}
+.scan{height:6px;border-radius:3px;background:var(--pri2);overflow:hidden;margin:10px 0}.scan i{display:block;height:100%;width:40%;background:var(--pri);animation:sl 1s infinite alternate ease-in-out}
+@keyframes sl{to{margin-left:60%}}
+@media (prefers-reduced-motion:reduce){.block{animation:none}.scan i{animation:none}}
+label.f{display:block;font-weight:700;margin:12px 0 4px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav><div id="nav"></div></nav>
+<div id="layer"></div>
+<script>
+/* ===== 藥品資料庫（示範數值，實際請以仿單與醫師指示為準）===== */
+const ING_GAP={'乙醯胺酚':4,'布洛芬':6};
+const FEVER=['乙醯胺酚','布洛芬'];
+const DRUGS=[
+ {id:'apap',name:'小兒退燒糖漿',sub:'乙醯胺酚 160mg/5ml',ing:['乙醯胺酚'],conc:32,mgkg:[10,15],def:10,minM:3},
+ {id:'ibu',name:'布洛芬退燒糖漿',sub:'布洛芬 100mg/5ml',ing:['布洛芬'],conc:20,mgkg:[5,10],def:5,minM:6},
+ {id:'cold',name:'綜合感冒糖漿',sub:'含乙醯胺酚 120mg/5ml、氯苯那敏',ing:['乙醯胺酚','氯苯那敏'],conc:24,mgkg:[10,15],def:10,minM:24,consult:'含多種成分，2 歲以上請先問藥師確認。'},
+ {id:'cough',name:'止咳化痰糖漿',sub:'右美沙芬',ing:['右美沙芬'],conc:null,minM:24,consult:'咳嗽藥劑量因產品而異，請依藥師或仿單指示。'},
+ {id:'asa',name:'阿斯匹靈錠',sub:'乙醯水楊酸',ing:['乙醯水楊酸'],conc:null,minM:216,why:'兒童發燒時使用可能引發嚴重的雷氏症候群。'}
+];
+const WHO=['媽媽','爸爸','阿嬤'];
+const D=id=>DRUGS.find(d=>d.id===id);
+const feverIng=d=>d.ing.filter(i=>FEVER.includes(i));
+const isFever=d=>feverIng(d).length>0;
+/* ===== Store：日後可替換為 Firebase ===== */
+const Store={
+ load(){try{return JSON.parse(localStorage.getItem('kms'))}catch(e){return null}},
+ save(){try{localStorage.setItem('kms',JSON.stringify({child:S.child,logs:S.logs,who:S.who}))}catch(e){}}
+};
+const S={child:{name:'小寶',kg:14,ageY:3},logs:[],who:'媽媽',tab:'home',calc:{drug:'apap',kg:14},scan:{}};
+const saved=Store.load();if(saved){S.child=saved.child;S.logs=saved.logs;S.who=saved.who;S.calc.kg=S.child.kg}
+window.addEventListener('storage',e=>{if(e.key==='kms'){const s=Store.load();if(s){S.child=s.child;S.logs=s.logs;render()}}});
+/* ===== 工具 ===== */
+const $=s=>document.querySelector(s);
+const fmt=x=>(Math.round(x*10)/10).toFixed(1);
+const hm=t=>new Date(t).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
+const ageM=()=>S.child.ageY*12;
+function ago(t){const m=Math.round((Date.now()-t)/60000);return m<1?'剛剛':m<60?m+' 分鐘前':Math.floor(m/60)+' 小時'+(m%60?(m%60)+' 分鐘':'')+'前'}
+function cd(ms){const s=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=s%60;return [h,m,c].map(n=>String(n).padStart(2,'0')).join(':')}
+function light(d){const m=ageM();
+ if(m<d.minM)return {c:'r',e:'🔴',t:'不建議使用',x:d.why||`此藥建議 ${d.minM>=24?Math.round(d.minM/12)+' 歲':d.minM+' 個月'}以上才使用。`};
+ if(d.consult)return {c:'y',e:'🟡',t:'先問藥師或醫師',x:d.consult};
+ return {c:'g',e:'🟢',t:'兒童可用',x:'依體重計算劑量，並遵守間隔時間。'}}
+function dose(d,kg){if(!d.conc)return null;return {ml:kg*d.def/d.conc,lo:kg*d.mgkg[0]/d.conc,hi:kg*d.mgkg[1]/d.conc}}
+/* 各退燒成分下次可給藥時間 */
+function ready(ing){let r=0,src=null;S.logs.forEach(l=>{if(D(l.drug).ing.includes(ing)){const t=l.t+ING_GAP[ing]*3600000;if(t>r){r=t;src=l}}});return {t:r,src}}
+function overlaps(d){const out=[];d.ing.forEach(i=>{const gap=ING_GAP[i]||6;S.logs.forEach(l=>{if(D(l.drug).ing.includes(i)&&Date.now()<l.t+gap*3600000&&!out.find(o=>o.ing===i))out.push({ing:i,log:l,until:l.t+gap*3600000})})});return out}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+function sheet(h){$('#layer').innerHTML=`<div class="mask" onclick="if(event.target===this)closeLayer()"><div class="sheet">${h}</div></div>`}
+function closeLayer(){$('#layer').innerHTML=''}
+/* ===== 頁面 ===== */
+function header(){return `<header><button class="chip" onclick="editChild()">👶 ${S.child.name}・${S.child.kg} kg ✎</button><button class="chip" onclick="pickWho()">🙋 ${S.who} ⇅</button></header>`}
+function home(){
+ let rem=0,total=4*3600000,who=null;
+ FEVER.forEach(i=>{const r=ready(i);const left=r.t-Date.now();if(left>rem){rem=left;total=ING_GAP[i]*3600000;who=i}});
+ const ok=rem<=0,C=2*Math.PI*105,off=ok?0:C*(1-rem/total);
+ const col=ok?'var(--ok)':'var(--warn)';
+ const chips=FEVER.map(i=>{const l=ready(i).t-Date.now();return `<span class="tag ${l>0?'fever':''}">${i}：${l>0?cd(l):'可給藥'}</span>`}).join('');
+ const last=S.logs[0];
+ return `${header()}<h1>${ok?'現在可以給退燒類藥物':'請先等一等'}</h1>
+ <p class="sub">${ok?'退燒成分已過安全間隔':`還在冷卻中，避免${who}過量`}</p>
+ <div class="ringwrap"><svg width="250" height="250" viewBox="0 0 250 250"><circle cx="125" cy="125" r="105" fill="none" stroke="var(--line)" stroke-width="16"/><circle cx="125" cy="125" r="105" fill="none" stroke="${col}" stroke-width="16" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}"/></svg>
+ <div class="ringtxt">${ok?'<div class="big" style="color:var(--ok)">可給藥</div>':`<div class="lbl">距離下次可給藥</div><div class="big" style="color:var(--warn)">${cd(rem)}</div><div class="lbl">約 ${hm(Date.now()+rem)} 後</div>`}</div></div>
+ <div style="text-align:center;margin-bottom:14px">${chips}</div>
+ <button class="btn" onclick="startDose()">✔ 我剛餵藥了</button>
+ <div class="card" style="margin-top:14px"><div class="lbl">最近一次給藥</div>${last?`<h2>${D(last.drug).name}</h2><div>${hm(last.t)}（${ago(last.t)}）・${last.by}餵</div>`:'<div>還沒有紀錄，餵藥後按上方按鈕記錄。</div>'}</div>`}
+function startDose(){
+ sheet(`<h2>餵了哪一種藥？</h2><p class="sub">選擇後系統會先檢查成分有沒有重複</p>${DRUGS.map(d=>`<button class="pick" onclick="tryLog('${d.id}')">${d.name}<small>${d.sub}</small></button>`).join('')}<button class="btn small" onclick="closeLayer()">取消</button>`)}
+function capHit(d){for(const i of feverIng(d)){const n=S.logs.filter(l=>D(l.drug).ing.includes(i)&&Date.now()-l.t<864e5).length;if(n>=5)return {ing:i,n}}return null}
+function showCap(c){$('#layer').innerHTML=`<div class="block"><div class="in"><div style="font-size:70px">⛔</div><h1>今天的次數已達上限</h1><div class="bx">過去 24 小時內，含<b>「${c.ing}」</b>的藥已經餵了 <b>${c.n} 次</b>，不建議再餵。<br><br>孩子如果還在發燒，請聯絡醫師或藥師。</div><button class="btn" onclick="closeLayer()">好，我不餵了</button></div></div>`}
+function tryLog(id){const d=D(id);const ov=overlaps(d);const cap=capHit(d);
+ if(cap){closeLayer();showCap(cap)}
+ else if(ov.length){closeLayer();showBlock(d,ov)}
+ else if(light(d).c==='r'){sheet(`<div class="light r"><div class="em">🔴</div><div class="t">不建議給這個藥</div><p>${light(d).x}</p></div><button class="btn" onclick="closeLayer()">好，我不餵了</button><br><button class="btn small" onclick="commit('${id}',false)">仍要記錄</button>`)}
+ else commit(id,false)}
+function commit(id,forced){const d=D(id);const ds=dose(d,S.child.kg);
+ S.logs.unshift({id:Date.now(),t:Date.now(),drug:id,dose:ds?fmt(ds.ml):null,by:S.who,forced});Store.save();closeLayer();$('#layer').innerHTML='';toast('已記錄 '+d.name);render()}
+function showBlock(d,ov){const o=ov[0];
+ $('#layer').innerHTML=`<div class="block"><div class="in"><div style="font-size:70px">⛔</div><h1>請先停一下！<br>成分重複了</h1>
+ <div class="bx">「${d.name}」含有<b>「${o.ing}」</b><br><br>${ago(o.log.t)}，${o.log.by}已餵過含「${o.ing}」的<b>${D(o.log.drug).name}</b>。<br><br>最快可再餵：<b>${hm(o.until)}</b>（還要等 ${cd(o.until-Date.now()).slice(0,5).replace(':',' 小時 ')} 分）</div>
+ <button class="btn" onclick="closeLayer()">取消，不餵了</button><br>
+ <button class="btn small" id="force" onclick="forceLog('${d.id}')">我已確認過，仍要記錄</button></div></div>`}
+let fc=false;function forceLog(id){if(!fc){fc=true;const b=$('#force');b.textContent='再按一次，確認超出間隔仍要記錄';b.style.background='#fff';b.style.color='var(--bad)';setTimeout(()=>{fc=false;const x=$('#force');if(x){x.textContent='我已確認過，仍要記錄';x.style.background='';x.style.color=''}},4000);return}fc=false;commit(id,true)}
+function pickWho(){sheet(`<h2>現在是誰在照顧？</h2><p class="sub">紀錄會標註餵藥的人</p>${WHO.map(w=>`<button class="pick ${w===S.who?'on':''}" onclick="S.who='${w}';Store.save();closeLayer();render()">${w}</button>`).join('')}`)}
+function editChild(){sheet(`<h2>孩子資料</h2><label class="f">名字</label><input type="text" id="cn" value="${S.child.name}" style="width:100%;font-size:24px;padding:12px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink)"><label class="f">體重（公斤）</label><input type="number" id="ck" value="${S.child.kg}" step="0.1" inputmode="decimal"><label class="f">年齡（歲，可填 0.5）</label><input type="number" id="ca" value="${S.child.ageY}" step="0.5" inputmode="decimal"><br><button class="btn" onclick="saveChild()">儲存</button>`)}
+function saveChild(){const k=parseFloat($('#ck').value),a=parseFloat($('#ca').value);if(!(k>=2&&k<=50)||!(a>=0&&a<=12)){toast('請輸入正確的體重與年齡');return}S.child={name:$('#cn').value||'小寶',kg:k,ageY:a};S.calc.kg=k;Store.save();closeLayer();render()}
+/* 藥盒辨識：嵌入 Streamlit，辨識結果貼回後以成分規則判斷（示範規則，需藥師校對）*/
+const STREAMLIT_URL='https://4iwd7zqgdl2mq3f3wvqybc.streamlit.app/';
+const RULES=[
+ {n:'乙醯胺酚',a:['乙醯胺酚','乙醯氨基酚','對乙醯','acetaminophen','paracetamol','撲熱息痛'],minM:3,ok:true},
+ {n:'布洛芬',a:['布洛芬','ibuprofen'],minM:6,ok:true},
+ {n:'乙醯水楊酸',a:['乙醯水楊酸','阿斯匹靈','阿司匹林','aspirin'],minM:216,why:'兒童使用可能引發雷氏症候群'},
+ {n:'可待因',a:['可待因','codeine'],minM:144,why:'12 歲以下不建議使用'},
+ {n:'右美沙芬',a:['右美沙芬','dextromethorphan'],minM:24},
+ {n:'氯苯那敏',a:['氯苯那敏','chlorpheniramine','馬來酸氯'],minM:24},
+ {n:'苯海拉明',a:['苯海拉明','diphenhydramine'],minM:24},
+ {n:'偽麻黃鹼',a:['偽麻黃','假麻黃','pseudoephedrine','麻黃'],minM:24},
+ {n:'愈創甘油醚',a:['愈創','guaifenesin'],minM:24}
+];
+S.scan={name:'',text:'',res:null};
+function judge(){
+ const name=S.scan.name.trim(),raw=S.scan.text;
+ if(!raw.trim()&&!name){toast('請先貼上辨識出的成分');return}
+ const low=(name+'\n'+raw).toLowerCase(),m=ageM(),items=[];
+ RULES.forEach(r=>{if(r.a.some(k=>low.includes(k.toLowerCase()))){
+  let c,t;
+  if(m<r.minM){c='r';t=r.why||`建議 ${r.minM>=24?Math.round(r.minM/12)+' 歲':r.minM+' 個月'}以上才使用`}
+  else if(r.ok){c='g';t='此年齡可用，仍須依體重計算劑量'}
+  else{c='y';t='請先問藥師或醫師確認'}
+  items.push({n:r.n,c,t,rule:r})}});
+ const matched=items.map(i=>i.n);
+ const known=RULES.flatMap(r=>r.a.map(x=>x.toLowerCase()));
+ const unk=raw.replace(/[\d.]+\s*(mg|毫克|g|ml|mcg|μg|%)/gi,'').replace(/[（(][^）)]*[）)]/g,'').split(/[,，、;；\n\/]+/).map(s=>s.trim()).filter(s=>s.length>1&&!/^[\d\s.]+$/.test(s)&&!known.some(k=>s.toLowerCase().includes(k)));
+ const unkShow=[...new Set(unk)].slice(0,5);
+ let c='g';
+ if(items.some(i=>i.c==='r'))c='r';
+ else if(!items.length||unkShow.length||items.some(i=>i.c==='y'))c='y';
+ const L={g:['🟢','兒童可用','辨識到的成分都在此年齡可用範圍內。'],y:['🟡','先問藥師或醫師',items.length?'部分成分需要確認，或有系統沒收錄的成分。':'系統沒有收錄這些成分，無法判斷。'],r:['🔴','不建議給孩子吃','含有此年齡不建議使用的成分，請勿餵藥。']}[c];
+ const d=DRUGS.find(x=>x.conc&&x.ing.length===matched.length&&x.ing.every(i=>matched.includes(i)));
+ S.scan.res={c,e:L[0],t:L[1],x:L[2],items,unk:unkShow,d,fever:items.some(i=>FEVER.includes(i.n)),name};
+ render();setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),50)}
+function scan(){const s=S.scan,r=s.res;
+ const res=r?`<div class="light ${r.c}"><div class="em">${r.e}</div><div class="t">${r.t}</div><p>${r.x}</p><p style="font-size:15px;color:var(--sub)">依 ${S.child.name}（${S.child.ageY} 歲）判斷</p></div>
+ <div class="card"><h2>${r.name||'成分判讀'}</h2>${r.items.map(i=>`<div style="margin-bottom:8px"><span class="tag ${i.c==='r'?'fever':''}" style="${i.c==='r'?'background:var(--badbg);color:var(--bad)':i.c==='g'?'background:var(--okbg);color:var(--ok)':''}">${i.c==='g'?'🟢':i.c==='y'?'🟡':'🔴'} ${i.n}</span><div class="sub" style="margin:2px 0 0">${i.t}</div></div>`).join('')}
+ ${r.unk.length?`<div style="margin-top:6px"><span class="tag fever">🟡 未收錄</span><div class="sub" style="margin:2px 0 0">${r.unk.join('、')}：請問藥師</div></div>`:''}
+ ${r.fever?'<p style="margin:10px 0 0;font-weight:700;color:var(--warn)">⚠ 含退燒成分，不要和其他退燒藥一起餵</p>':''}</div>
+ ${r.d&&r.c!=='r'?`<button class="btn" onclick="S.calc.drug='${r.d.id}';go('calc')">帶入劑量試算</button><br>`:''}
+ <button class="btn ghost" onclick="S.scan={name:'',text:'',res:null};render();window.scrollTo(0,0)">掃下一個藥</button><div class="note">僅供參考，請以仿單及醫師、藥師指示為準</div>`:'';
+ return `${header()}<h1>藥盒安全燈號</h1><p class="sub">① 上傳藥盒照片　② 貼上辨識結果　③ 看燈號</p>
+ <div class="card" style="padding:10px"><iframe src="${STREAMLIT_URL}?embed=true" title="藥盒辨識" allow="camera" style="width:100%;height:520px;border:0;border-radius:14px"></iframe></div>
+ <a class="btn ghost" href="${STREAMLIT_URL}" target="_blank" rel="noopener" style="text-decoration:none;margin-bottom:14px">畫面太小？在新分頁開啟辨識</a>
+ <div class="card"><h2>② 貼上辨識結果</h2><label class="f">藥名（可不填）</label><input type="text" value="${s.name.replace(/"/g,'&quot;')}" oninput="S.scan.name=this.value" style="width:100%;font-size:20px;padding:12px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-family:inherit"><label class="f">成分清單</label><textarea rows="4" oninput="S.scan.text=this.value" placeholder="例如：乙醯胺酚 160mg、氯苯那敏 1mg" style="width:100%;font-size:20px;padding:12px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-family:inherit">${s.text}</textarea><br><br><button class="btn" onclick="judge()">③ 判斷孩子能不能吃</button></div>${res}`}
+/* 劑量試算 */
+function calc(){const d=D(S.calc.drug),kg=S.calc.kg,ds=dose(d,kg),l=light(d);
+ let out;
+ if(!(kg>=2&&kg<=50))out=`<div class="light y"><div class="t">請輸入 2～50 公斤</div></div>`;
+ else if(l.c==='r')out=`<div class="light r"><div class="em">🔴</div><div class="t">不建議使用</div><p>${l.x}</p></div>`;
+ else if(!ds)out=`<div class="light y"><div class="t">此藥不提供換算</div><p>${d.consult||'請依仿單與醫師指示。'}</p></div>`;
+ else out=`<div class="card" style="text-align:center"><div class="lbl">建議這次餵</div><div class="big" style="font-size:72px;color:var(--pri)">${fmt(ds.ml)} <span style="font-size:32px">ml</span></div><div class="lbl">合理範圍 ${fmt(ds.lo)}～${fmt(ds.hi)} ml（${d.mgkg[0]}～${d.mgkg[1]} mg/kg）</div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><div>⏱ 至少間隔 <b>${d.ing.includes('乙醯胺酚')?4:6} 小時</b>・24 小時內勿超過 <b>5 次</b></div>${l.c==='y'?`<p style="color:var(--warn);font-weight:700;margin:10px 0 0">🟡 ${l.x}</p>`:''}</div>`;
+ return `${header()}<h1>體重劑量試算</h1><p class="sub">依體重換算，不只看年齡</p>
+ <label class="f">孩子體重（公斤）</label><input type="number" value="${kg}" step="0.1" inputmode="decimal" oninput="S.calc.kg=parseFloat(this.value);clearTimeout(window.ct);window.ct=setTimeout(render,600)"><br>
+ <label class="f">選擇藥品</label><div>${DRUGS.map(x=>`<button class="pick ${x.id===d.id?'on':''}" onclick="S.calc.drug='${x.id}';render()">${x.name}<small>${x.sub}</small></button>`).join('')}</div>${out}
+ <div class="note">僅供參考，請以仿單及醫師、藥師指示為準</div>`}
+/* 紀錄 */
+function logs(){
+ const items=S.logs.map(l=>{const d=D(l.drug);return `<div class="tli ${l.forced?'f':''}"><div class="card" style="margin:0"><div class="time">${hm(l.t)}・${ago(l.t)}</div><h2 style="margin:2px 0">${d.name}</h2>${d.ing.map(i=>`<span class="tag ${FEVER.includes(i)?'fever':''}">${i}</span>`).join('')}<div class="sub" style="margin:6px 0 0">${l.by}餵${l.dose?'・'+l.dose+' ml':''}</div>${l.forced?'<div style="color:var(--bad);font-weight:700">⚠ 超出間隔仍記錄</div>':''}</div></div>`}).join('');
+ return `${header()}<h1>家人共用紀錄</h1><p class="sub">交班前看一眼，不用再口頭確認</p>${S.logs.length?`<div class="tl">${items}</div>`:`<div class="card"><h2>還沒有紀錄</h2><p class="sub">餵藥後到首頁按「我剛餵藥了」。</p><button class="btn ghost" onclick="demo()">載入示範資料</button></div>`}
+ ${S.logs.length?'<button class="btn small" onclick="if(confirm(\'清除所有紀錄？\')){S.logs=[];Store.save();render()}">清除紀錄</button>':''}
+ <div class="note">同一支手機的不同分頁會即時同步；正式版將接雲端讓家人手機同步</div>`}
+function demo(){S.logs=[{id:1,t:Date.now()-90*60000,drug:'cold',dose:'5.8',by:'媽媽',forced:false},{id:2,t:Date.now()-5*3600000,drug:'ibu',dose:'3.5',by:'阿嬤',forced:false}];Store.save();render()}
+/* ===== 導覽與渲染 ===== */
+const TABS=[['home','🏠','首頁'],['scan','📷','藥盒'],['calc','💧','劑量'],['logs','📋','紀錄']];
+function go(t){S.tab=t;render();window.scrollTo(0,0)}
+function render(){
+ $('#nav').innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?'on':''}" onclick="go('${t[0]}')"><b>${t[1]}</b>${t[2]}</button>`).join('');
+ const a=document.activeElement;if(a&&a.tagName==='INPUT'&&a.type==='number')return;
+ $('#app').innerHTML={home,scan,calc,logs}[S.tab]()}
+setInterval(()=>{if(S.tab==='home'&&!$('#layer').innerHTML)render()},1000);
+render();
+</script>
+</body>
+</html>
